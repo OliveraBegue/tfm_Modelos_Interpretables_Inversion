@@ -125,8 +125,8 @@ La memoria completa del trabajo se encuentra en [`memoria/`](./memoria), incluye
 ## 🚀 Reproducibilidad
 
 ```bash
-git clone https://github.com/<usuario>/<nombre-repo>.git
-cd <nombre-repo>
+git clone https://github.com/OliveraBegue/tfm_Modelos_Interpretables_Inversion.git
+cd <tfm_Modelos_Interpretables_Inversion>
 pip install -r requirements.txt
 ```
 
