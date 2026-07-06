@@ -1,2 +1,35 @@
 # Memoria del TFM
 
+## Resumen del Trabajo Fin de Máster
+
+**Título:** *Modelos interpretables para inversión financiera: generación de señales de inversión mediante aprendizaje supervisado interpretable y detección de regímenes económicos. Aplicación al S&P 500.*
+
+Este Trabajo Fin de Máster desarrolla un sistema de inteligencia artificial aplicado a los mercados financieros cuyo objetivo es generar señales de inversión sobre el índice S&P 500 combinando modelos de Machine Learning interpretables con técnicas de detección de regímenes de mercado. El proyecto aborda uno de los principales retos del aprendizaje automático en finanzas: construir modelos capaces de ofrecer un buen rendimiento predictivo sin renunciar a la transparencia y explicabilidad de sus decisiones.
+
+La motivación del trabajo surge de la necesidad de superar las limitaciones de los modelos tradicionales utilizados en predicción financiera. Muchos algoritmos de alta precisión funcionan como "cajas negras", dificultando la comprensión de por qué generan determinadas señales de compra o venta. En el ámbito financiero esta falta de interpretabilidad supone un problema importante tanto para la gestión del riesgo como para la confianza en los modelos. El objetivo principal del proyecto fue investigar si era posible desarrollar un sistema que mantuviera un equilibrio entre capacidad predictiva, estabilidad temporal e interpretabilidad.
+
+Para ello se diseñó un pipeline completo de Machine Learning siguiendo la metodología CRISP-DM y un desarrollo iterativo inspirado en metodologías Agile. Se utilizaron datos diarios del S&P 500 comprendidos entre 2004 y 2024, junto con más de cuarenta variables procedentes de diferentes fuentes de información financiera y macroeconómica. Entre ellas se incluyeron indicadores técnicos, variables de volatilidad, diferenciales de crédito, indicadores macroeconómicos publicados por la Reserva Federal, datos del VIX, materias primas y comportamiento relativo de distintos sectores bursátiles.
+
+Uno de los aspectos más innovadores del proyecto fue la definición del problema de clasificación mediante el método **Triple Barrier Labeling**, propuesto por Marcos López de Prado. En lugar de predecir simplemente si el mercado subiría o bajaría en un horizonte temporal fijo, las etiquetas se construyeron simulando una operación real de trading mediante niveles dinámicos de take profit, stop loss y límite temporal. Este enfoque permitió generar un objetivo mucho más representativo del comportamiento real de una estrategia de inversión y redujo parte del ruido inherente a las series financieras.
+
+Tras la fase de ingeniería de variables se construyeron indicadores de tendencia, momento, volatilidad, estrés de mercado, ciclo económico y rotación sectorial. Posteriormente se aplicaron procesos de eliminación de multicolinealidad mediante análisis de correlación y Factor de Inflación de la Varianza (VIF), reduciendo el conjunto inicial hasta un subconjunto de variables con mayor capacidad predictiva y mejor estabilidad.
+
+El entrenamiento de los modelos se realizó utilizando un esquema de validación **Walk-Forward con ventana expandible**, especialmente diseñado para series temporales financieras y capaz de evitar el sesgo temporal que introduciría una validación cruzada tradicional. Además, la optimización de hiperparámetros se llevó a cabo mediante **Optuna**, utilizando optimización bayesiana para ajustar automáticamente la configuración de cada modelo sin contaminar el conjunto de validación.
+
+Durante la primera fase experimental se compararon tres aproximaciones con diferentes niveles de interpretabilidad:
+
+* **Explainable Boosting Machine (EBM)** como modelo principal, capaz de ofrecer explicaciones exactas de cada predicción mediante funciones aditivas interpretables.
+* **LightGBM**, utilizado como referencia de alto rendimiento para cuantificar el coste de utilizar modelos completamente interpretables.
+* Un **modelo Student** obtenido mediante técnicas de destilación, entrenado para reproducir el comportamiento del LightGBM utilizando modelos mucho más sencillos como árboles de decisión o RuleFit, permitiendo extraer reglas de decisión fácilmente comprensibles.
+
+La evaluación de los modelos no se limitó únicamente a métricas clásicas de clasificación como F1-Score o AUC-ROC. También se estudió la estabilidad temporal de la importancia de las variables utilizando valores SHAP, verificando si los modelos aprendían patrones realmente consistentes o simplemente se adaptaban al ruido presente en determinados periodos históricos.
+
+En una segunda iteración del proyecto se incorporó un componente de aprendizaje no supervisado mediante **Modelos Ocultos de Markov (Hidden Markov Models)**. El objetivo fue detectar automáticamente distintos regímenes de mercado (alcistas y bajistas) y utilizar esta información como filtro adicional para activar únicamente aquellas señales generadas durante condiciones de mercado favorables. Este enfoque permitió estudiar el impacto que tienen los cambios de régimen sobre la fiabilidad de los modelos predictivos.
+
+Finalmente, todas las señales obtenidas fueron evaluadas mediante un proceso completo de **backtesting fuera de muestra**, utilizando exclusivamente datos comprendidos entre 2020 y 2024 que permanecieron completamente bloqueados durante el desarrollo del proyecto. La estrategia simuló operaciones reales sobre el índice S&P 500 incorporando costes de transacción y comparando su comportamiento frente a una estrategia pasiva Buy & Hold.
+
+Los resultados demostraron que los modelos desarrollados fueron capaces de generar estrategias con mejores métricas ajustadas al riesgo que la inversión pasiva, obteniendo mejoras en indicadores como **Sharpe Ratio, Calmar Ratio y reducción del drawdown máximo**. Sin embargo, el retorno acumulado final permaneció por debajo del benchmark debido a que el sistema permanecía en liquidez durante algunos de los tramos más alcistas del mercado. Este comportamiento puso de manifiesto el compromiso existente entre maximizar la rentabilidad absoluta y reducir el riesgo asumido.
+
+Uno de los hallazgos más relevantes del trabajo fue comprobar que modelos altamente interpretables como Explainable Boosting Machine alcanzan un rendimiento muy cercano al de modelos considerados de caja negra como LightGBM. Además, el análisis de interpretabilidad mostró una elevada consistencia entre ambos modelos respecto a las variables consideradas más importantes, reforzando la evidencia de que las señales aprendidas tenían una base económica coherente y no respondían únicamente al sobreajuste estadístico.
+
+En conjunto, este proyecto integra técnicas avanzadas de aprendizaje supervisado, aprendizaje no supervisado, optimización bayesiana, interpretación de modelos, ingeniería de variables financieras y validación rigurosa sobre series temporales. El resultado es un marco completo para la generación de señales de inversión interpretable que demuestra que es posible combinar precisión predictiva, robustez y transparencia en aplicaciones reales de Machine Learning para finanzas.
