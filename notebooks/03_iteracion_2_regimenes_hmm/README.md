@@ -1,5 +1,8 @@
 # Bloque 3 — Segunda iteración: filtro de régimen de mercado (HMM)
 
-Notebook(s) donde se añade el filtro de régimen de mercado mediante Hidden Markov Models, se combina con las señales del Bloque 2 y se ejecuta el backtesting fuera de muestra (2020–2024) vs Buy & Hold.
+**Notebook:** `Iteracion_2_Final_TFM.ipynb`
 
-**Output esperado:** modelo HMM en `models/iteracion_2/`, resultados de backtesting en `reports/backtesting/`.
+Se incorpora un Hidden Markov Model para detectar regímenes de mercado (alcista/bajista) y filtrar las señales de la Iteración 1, activándolas solo en condiciones favorables. Incluye backtesting fuera de muestra (2020–2024) comparando Iteración 1 vs Iteración 2 vs Buy & Hold.
+
+**Modelos entrenados:** `models/iteracion_2/` (HMM, 6 folds).
+**Resultados:** `reports/iteracion_2/` — regímenes detectados, matrices de transición, métricas consolidadas y curvas de equity comparativas.

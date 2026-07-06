@@ -44,21 +44,24 @@ Incorporación de un componente de aprendizaje **no supervisado** mediante **Hid
 ```
 tfm-repo/
 ├── data/
-│   ├── raw/                     # Datos originales sin procesar
-│   └── processed/               # Datos tras limpieza, features y labeling
+│   ├── raw/                                 # Datos originales sin procesar
+│   └── processed/                           # Datos tras limpieza, features y labeling
 ├── notebooks/
-│   ├── 01_preparacion_datos/            # Bloque de datos (bloque6)
-│   ├── 02_iteracion_1_ebm_lightgbm/     # 1ª iteración: EBM / LightGBM / Student
-│   └── 03_iteracion_2_regimenes_hmm/    # 2ª iteración: filtro HMM + backtesting
-├── src/                          # Funciones y módulos reutilizables (.py / .r)
+│   ├── 01_preparacion_datos/
+│   │   └── Bloque_0_v6.ipynb                # Ingesta, features, Triple Barrier Labeling
+│   ├── 02_iteracion_1_ebm_lightgbm/
+│   │   └── Iteracion_1_Final_TFM.ipynb       # EBM / LightGBM / Student / RuleFit
+│   └── 03_iteracion_2_regimenes_hmm/
+│       └── Iteracion_2_Final_TFM.ipynb       # Filtro de régimen HMM + backtesting
+├── src/                                      # Funciones y módulos reutilizables
 ├── models/
-│   ├── iteracion_1/              # Modelos entrenados (EBM, LightGBM, Student)
-│   └── iteracion_2/              # Modelos HMM y pipeline combinado
+│   ├── iteracion_1/                          # EBM, LightGBM, Student, RuleFit, DT (6 folds walk-forward)
+│   └── iteracion_2/                          # Modelos HMM (6 folds)
 ├── reports/
-│   ├── figures/                  # Gráficas (SHAP, curvas, importancia de variables)
-│   └── backtesting/              # Resultados de backtesting y métricas
-├── memoria/                       # Memoria del TFM (PDF/Word) y anexos
-├── docs/                          # Documentación adicional
+│   ├── iteracion_1/                          # Métricas por fold, SHAP, importancia de variables, backtesting
+│   └── iteracion_2/                          # Regímenes HMM, comparativa iter1 vs iter2, backtesting condicionado
+├── memoria/                                   # Memoria del TFM (PDF/Word) y anexos
+├── docs/                                      # Documentación adicional
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -84,11 +87,32 @@ tfm-repo/
 
 ## 📊 Resultados principales
 
-- Los modelos generaron estrategias con **mejores métricas ajustadas al riesgo** que la inversión pasiva (Sharpe Ratio, Calmar Ratio y reducción de drawdown máximo superiores al Buy & Hold).
-- El retorno acumulado quedó por debajo del benchmark, ya que el sistema permanecía en liquidez en algunos tramos alcistas — evidenciando el *trade-off* entre rentabilidad absoluta y control de riesgo.
-- **EBM alcanzó un rendimiento muy cercano a LightGBM**, con alta consistencia en las variables más relevantes según SHAP, reforzando que las señales aprendidas tienen una base económica coherente y no responden a sobreajuste.
+**Validación (media walk-forward, 6 folds):**
 
-*(Resultados detallados, gráficas y tablas disponibles en `reports/` y en la memoria completa en `memoria/`.)*
+| Modelo | F1 media | AUC media |
+|---|---|---|
+| EBM | 0.507 | 0.549 |
+| LightGBM | 0.511 | 0.599 |
+| RuleFit | 0.477 | 0.598 |
+
+**Backtesting fuera de muestra (2020–2024) — comparativa por iteración:**
+
+| Versión | Modelo | Sharpe | Max Drawdown | Calmar | Retorno total | Nº señales |
+|---|---|---|---|---|---|---|
+| — | Buy & Hold | 0.56 | -0.361 | 1.55 | 0.622 | — |
+| Iteración 1 | EBM | 0.339 | -0.129 | 2.62 | 0.144 | 110 |
+| Iteración 1 | LightGBM | 0.459 | -0.353 | 1.30 | 0.414 | 763 |
+| Iteración 1 | Student | 0.441 | -0.337 | 1.31 | 0.362 | 664 |
+| **Iteración 2 (+HMM)** | **EBM** | **0.614** | **-0.015** | **41.36** | 0.051 | 24 |
+| Iteración 2 (+HMM) | LightGBM | 0.536 | -0.084 | 6.37 | 0.177 | 323 |
+| Iteración 2 (+HMM) | Student | 0.450 | -0.093 | 4.82 | 0.138 | 297 |
+
+**Lecturas clave:**
+- El filtro de régimen (HMM) de la **2ª iteración mejora drásticamente el control de riesgo** en los tres modelos: el Max Drawdown de EBM pasa de -12.9% a -1.5%, y el Sharpe supera al del Buy & Hold (0.61 vs 0.56).
+- El Calmar Ratio de EBM en la 2ª iteración (41.4) es un orden de magnitud superior al de la 1ª iteración y al benchmark, a costa de un número mucho menor de señales activas (24 vs 110) y por tanto de un retorno acumulado más contenido — el clásico *trade-off* riesgo/rentabilidad.
+- **EBM mantiene un rendimiento predictivo muy cercano a LightGBM** (F1/AUC en validación) siendo un modelo intrínsecamente interpretable, y es precisamente el modelo que mejor aprovecha el filtro de régimen en el backtesting.
+
+*(Métricas y gráficas completas —SHAP, curvas de equity, matrices de transición HMM, estabilidad de reglas, etc.— en `reports/iteracion_1/` y `reports/iteracion_2/`, y desarrollo completo en `memoria/`.)*
 
 ---
 
