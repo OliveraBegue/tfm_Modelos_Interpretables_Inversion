@@ -1,0 +1,30 @@
+# Datos pesados (ajusta según lo que quieras versionar)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+
+# Modelos entrenados pesados (opcional, descomenta si pesan mucho)
+# models/**/*.pkl
+# models/**/*.joblib
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Entornos / credenciales
+.env
+*.log
